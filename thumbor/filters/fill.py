@@ -23,6 +23,15 @@ class Filter(BaseFilter):
             blue,
         )
 
+    def get_first_pixel(self):
+        mode, data = self.engine.image_data_as_rgb()
+        red, green, blue = data.getpixel((1, 1))
+        return "%02x%02x%02x" % (  # pylint: disable=consider-using-f-string
+            red,
+            green,
+            blue,
+        )
+
     @filter_method(r"[\w]+", BaseFilter.Boolean)
     async def fill(self, color, fill_transparent=False):
         self.fill_engine = self.engine.__class__(self.context)
@@ -36,6 +45,9 @@ class Filter(BaseFilter):
             if self.context.request.height != 0
             else self.engine.size[1]
         )
+
+        if color == "fpx":
+            color = self.get_first_pixel()
 
         # if the color is 'auto'
         # we will calculate the median color of
