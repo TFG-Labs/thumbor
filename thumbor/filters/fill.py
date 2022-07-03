@@ -27,7 +27,7 @@ class Filter(BaseFilter):
 
     def get_first_pixel(self):
         mode, data = self.engine.image_data_as_rgb()
-        image = Image.open(io.BytesIO(data))
+        image = Image.frombytes(mode='RGB', size=(2000, 2000), data=data)
         rgb = image.convert('RGB')
         red, green, blue = rgb.getpixel((1, 1))
         return "%02x%02x%02x" % (  # pylint: disable=consider-using-f-string
