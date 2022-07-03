@@ -371,7 +371,7 @@ class Engine(BaseEngine):
     def get_image_mode(self):
         return self.image.mode
 
-    def image_data_as_rgb(self, update_image=True):
+    def image_data_as_rgb(self, update_image=True, as_bytes=True):
         converted_image = self.image
 
         if converted_image.mode not in ["RGB", "RGBA"]:
@@ -385,6 +385,9 @@ class Engine(BaseEngine):
 
         if update_image:
             self.image = converted_image
+
+        if not as_bytes:
+            return converted_image.mode, converted_image
 
         return converted_image.mode, converted_image.tobytes()
 
