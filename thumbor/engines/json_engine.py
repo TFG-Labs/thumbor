@@ -12,7 +12,6 @@ import json
 
 from thumbor.engines import BaseEngine
 
-
 class JSONEngine(BaseEngine):
     def __init__(self, engine, path, callback_name=None):
         super().__init__(engine.context)
@@ -24,6 +23,7 @@ class JSONEngine(BaseEngine):
         self.focal_points = []
         self.refresh_image()
         self.exif = getattr(engine, "exif", None)
+        self.request_filters = {}
 
     def refresh_image(self):
         self.image = self.engine.image
@@ -123,6 +123,18 @@ class JSONEngine(BaseEngine):
     def has_transparency(self):
         return self.engine.has_transparency()
 
+    def get_filters(self):
+        filters = self.engine.context.filters_factory.filter_classes_map
+        req_filters = [fltr.split("(") for fltr in self.context.request.filters[:-1].split("):")]
+        for fltr in req_filters:
+            filter_name = fltr[0]
+            filter_params = fltr[1]
+            if filter_name == "fill":
+                self.request_filters["fill"] = filters["fill"].get_color(self, filter_params)
+
+            else:
+                self.request_filters[filter_name] = filter_params
+
     def can_auto_convert_png_to_jpg(self):
         can_convert = super().can_auto_convert_png_to_jpg()
         if can_convert:
@@ -146,6 +158,9 @@ class JSONEngine(BaseEngine):
 
         if self.focal_points:
             thumbor_json["thumbor"]["focal_points"] = self.focal_points
+
+        if self.request_filters:
+            thumbor_json["thumbor"]["request_filters"] = self.request_filters
 
         thumbor_json = json.dumps(thumbor_json)
 

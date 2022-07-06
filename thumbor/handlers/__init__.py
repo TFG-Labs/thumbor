@@ -297,6 +297,9 @@ class BaseHandler(tornado.web.RequestHandler):
                 self.context.request.engine
             ) = JSONEngine(engine, req.image_url, req.meta_callback)
 
+            if req.filters:
+                self.context.request.engine.get_filters()
+
         await self.context.transformer.transform()
         await self.after_transform()
 

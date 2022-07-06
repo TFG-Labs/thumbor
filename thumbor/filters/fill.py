@@ -33,6 +33,15 @@ class Filter(BaseFilter):
             blue,
         )
 
+    @classmethod
+    def get_color(cls, self, param):
+        if param == "fpx":
+            return cls.get_first_pixel(self)
+        if param == "auto":
+            return cls.get_median_color(self)
+        else:
+            return param
+
     @filter_method(r"[\w]+", BaseFilter.Boolean)
     async def fill(self, color, fill_transparent=False):
         self.fill_engine = self.engine.__class__(self.context)
