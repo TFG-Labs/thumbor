@@ -131,6 +131,8 @@ class JSONEngine(BaseEngine):
             filter_params = fltr[1]
             if filter_name == "fill":
                 self.request_filters["fill"] = filters["fill"].get_color(self, filter_params)
+            elif filter_name == "rotate":
+                self.request_filters["rotate"] = filter_params if int(filter_params) %90 == 0 else "0"
 
             else:
                 self.request_filters[filter_name] = filter_params
